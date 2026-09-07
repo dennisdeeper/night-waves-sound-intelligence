@@ -1,0 +1,174 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#07090c" />
+  <title>Night Waves — Sound Intelligence</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="app">
+    <header class="topbar">
+      <div>
+        <div class="brand">NIGHT WAVES</div>
+        <div class="subbrand">SOUND INTELLIGENCE · TEST BUILD 0.1</div>
+      </div>
+      <div id="statusPill" class="status-pill">AUDIO OFF</div>
+    </header>
+
+    <section class="notice">
+      <strong>Use headphones.</strong>
+      Live microphone/interface monitoring through speakers can create feedback.
+    </section>
+
+    <section class="panel hero">
+      <div class="hero-left">
+        <div class="eyebrow">LIVE INPUT</div>
+        <h1>Your sound. A deeper direction.</h1>
+        <p>
+          First prototype: stable audio in/out, four clearly different Sound Worlds,
+          six simple macro controls, bypass and A/B.
+        </p>
+      </div>
+      <div class="hero-actions">
+        <button id="startBtn" class="primary">START AUDIO</button>
+        <button id="monitorBtn" class="secondary" disabled>MONITOR OFF</button>
+        <button id="bypassBtn" class="secondary" disabled>BYPASS OFF</button>
+      </div>
+    </section>
+
+    <section class="panel input-panel">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">INPUT</div>
+          <h2>Audio source</h2>
+        </div>
+        <div class="meter-wrap">
+          <div class="meter"><div id="meterFill" class="meter-fill"></div></div>
+          <span id="levelText">— dB</span>
+        </div>
+      </div>
+      <div class="input-row">
+        <select id="inputSelect" disabled>
+          <option>Default audio input</option>
+        </select>
+        <button id="refreshInputsBtn" class="ghost" disabled>REFRESH INPUTS</button>
+      </div>
+      <div class="small-note">Browser output follows your computer's current audio output device.</div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">SOUND WORLDS</div>
+          <h2>Different starts. No cages.</h2>
+        </div>
+        <div id="worldHint" class="hint">Studio Zero · clean reference</div>
+      </div>
+
+      <div class="world-grid">
+        <button class="world active" data-world="studio">
+          <span class="world-num">01</span>
+          <strong>STUDIO ZERO</strong>
+          <small>Pure · neutral · controlled</small>
+        </button>
+        <button class="world" data-world="dub">
+          <span class="world-num">02</span>
+          <strong>DUB MATRIX</strong>
+          <small>Echo · filter · feedback</small>
+        </button>
+        <button class="world" data-world="tape">
+          <span class="world-num">03</span>
+          <strong>TAPE BLOOM</strong>
+          <small>Warmth · drift · saturation</small>
+        </button>
+        <button class="world" data-world="liquid">
+          <span class="world-num">04</span>
+          <strong>LIQUID ATMOSPHERE</strong>
+          <small>Depth · width · evolution</small>
+        </button>
+      </div>
+    </section>
+
+    <section class="panel">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">SHAPE YOUR SOUND</div>
+          <h2>Six simple macros</h2>
+        </div>
+        <div class="hint">Simple surface · deeper engine underneath</div>
+      </div>
+
+      <div class="macro-grid">
+        <label class="macro">
+          <span>DRY / WET</span>
+          <input id="dryWet" type="range" min="0" max="100" value="50" />
+          <output id="dryWetOut">50%</output>
+        </label>
+        <label class="macro">
+          <span>SPACE</span>
+          <input id="space" type="range" min="0" max="100" value="45" />
+          <output id="spaceOut">45%</output>
+        </label>
+        <label class="macro">
+          <span>ECHO</span>
+          <input id="echo" type="range" min="0" max="100" value="30" />
+          <output id="echoOut">30%</output>
+        </label>
+        <label class="macro">
+          <span>MOVEMENT</span>
+          <input id="movement" type="range" min="0" max="100" value="35" />
+          <output id="movementOut">35%</output>
+        </label>
+        <label class="macro">
+          <span>COLOUR</span>
+          <input id="colour" type="range" min="0" max="100" value="50" />
+          <output id="colourOut">50%</output>
+        </label>
+        <label class="macro">
+          <span>CHARACTER</span>
+          <input id="character" type="range" min="0" max="100" value="35" />
+          <output id="characterOut">35%</output>
+        </label>
+      </div>
+    </section>
+
+    <section class="panel compare">
+      <div>
+        <div class="eyebrow">A / B</div>
+        <h2>Original vs Night Waves</h2>
+        <p class="small-note">A is dry/original. B is the current Night Waves Sound World.</p>
+      </div>
+      <div class="ab-row">
+        <button id="aBtn" class="ab active" disabled>A · ORIGINAL</button>
+        <button id="bBtn" class="ab" disabled>B · NIGHT WAVES</button>
+      </div>
+    </section>
+
+    <section class="panel diagnostics">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">TEST STATUS</div>
+          <h2>Prototype diagnostics</h2>
+        </div>
+      </div>
+      <div class="diag-grid">
+        <div><span>Audio context</span><strong id="audioState">Not started</strong></div>
+        <div><span>Input</span><strong id="inputState">Not connected</strong></div>
+        <div><span>Monitor</span><strong id="monitorState">Off</strong></div>
+        <div><span>World</span><strong id="worldState">Studio Zero</strong></div>
+        <div><span>MIDI</span><strong id="midiState">Not requested</strong></div>
+        <div><span>Safety limiter</span><strong>Enabled</strong></div>
+      </div>
+      <button id="midiBtn" class="ghost">CHECK MIDI</button>
+    </section>
+
+    <footer>
+      Night Waves Sound Intelligence · Human-led creative prototype · v0.1
+    </footer>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
