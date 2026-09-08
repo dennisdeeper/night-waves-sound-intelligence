@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 90" role="img" aria-label="Night Waves logo">
+<defs><linearGradient id="g" x1="0" x2="1"><stop stop-color="#ffd39d"/><stop offset=".48" stop-color="#d08a4b"/><stop offset="1" stop-color="#fff0d4"/></linearGradient></defs>
+<path d="M8 18v55h8V40l17 32 14-28 13 28 17-32v33h8V18h-8L60 56 47 29 33 56 16 18z" fill="url(#g)"/>
+<path d="M16 57c8-13 17-14 25-2s17 12 25 0 17-12 27 0" fill="none" stroke="url(#g)" stroke-width="3" stroke-linecap="round"/>
+</svg>
