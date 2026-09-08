@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Night Waves Intelligence Bridge — Isolated R&D Demo</title>
+<style>
+body{margin:0;background:#11100e;color:#f3ead7;font-family:system-ui,Segoe UI,sans-serif}
+main{max-width:980px;margin:40px auto;padding:20px}
+.card{border:1px solid #5b4b32;border-radius:14px;background:linear-gradient(180deg,#191713,#100f0d);padding:18px;margin:14px 0}
+h1{letter-spacing:.08em;font-weight:600} h2{font-size:14px;letter-spacing:.16em;color:#d4b778}
+button{background:#211c13;border:1px solid #a78349;color:#f7e7bd;border-radius:9px;padding:10px 14px;cursor:pointer}
+small,.muted{color:#a99a7b}.pill{display:inline-block;border:1px solid #6c5a38;border-radius:999px;padding:4px 7px;margin:3px;font-size:11px}
+.result{display:grid;grid-template-columns:80px 1fr;gap:12px;border-top:1px solid #332b20;padding:12px 0}
+.score{font-size:24px;color:#e0c080}.bar{height:6px;background:#28231b;border-radius:9px;overflow:hidden}.bar>i{display:block;height:100%;background:#b69862}
+pre{white-space:pre-wrap;word-break:break-word;font-size:11px;color:#c8b996}
+</style>
+</head>
+<body>
+<main>
+<h1>NIGHT WAVES <span class="muted">INTELLIGENCE BRIDGE</span></h1>
+<div class="card">
+<h2>TRACK INTELLIGENCE</h2>
+<p><b>03:40 — transition needs more energy</b></p>
+<p class="muted">Brighter movement and a clearer transient lift would help the section arrive.</p>
+<button id="find">FIND SOUND</button>
+</div>
+<div id="intent" class="card" hidden></div>
+<div id="results" class="card" hidden></div>
+<div class="card"><small>Isolated R&D demo only. No microphone, recorder, Scenes or DSP connections are present.</small></div>
+</main>
+<script src="./nw-intelligence-bridge.js"></script>
+<script>
+const candidates=[
+{name:"Bright Transition Sweep",role:"transition",energy:.82,brightness:.80,movement:.84,transient:.74,width:.75,tonality:.52,texture:.66,root:"F#",bpm:124,confidence:.86},
+{name:"Soft Dark Atmosphere",role:"atmosphere",energy:.30,brightness:.28,movement:.22,transient:.12,width:.82,tonality:.8,texture:.7,root:"C",bpm:124,confidence:.90},
+{name:"Short Percussive Hit",role:"percussion",energy:.92,brightness:.62,movement:.55,transient:.98,width:.36,tonality:.25,texture:.34,root:null,bpm:124,confidence:.95},
+{name:"Wide Textural Lift",role:"transition",energy:.70,brightness:.74,movement:.78,transient:.56,width:.92,tonality:.34,texture:.88,root:null,bpm:124,confidence:.82}
+];
+document.getElementById("find").onclick=()=>{
+ const NW=window.NightWavesIntelligenceBridge;
+ const request=NW.buildFindSoundRequest({
+   message:"Transition needs more energy, brighter movement and a clearer transient lift",
+   confidence:.78,bpm:124,root:"F#",durationBars:2
+ });
+ const i=request.intent;
+ const intent=document.getElementById("intent");
+ intent.hidden=false;
+ intent.innerHTML=`<h2>SOUND INTENT</h2>
+ <span class="pill">${i.role}</span><span class="pill">energy ${Math.round(i.energy*100)}%</span>
+ <span class="pill">bright ${Math.round(i.brightness*100)}%</span><span class="pill">movement ${Math.round(i.movement*100)}%</span>
+ <span class="pill">transient ${Math.round(i.transient*100)}%</span><span class="pill">${i.root||"root unknown"}</span>
+ <span class="pill">${i.bpm||"tempo unknown"} BPM</span><span class="pill">confidence ${Math.round(i.confidence*100)}%</span>`;
+ const ranked=NW.rankCandidates(i,candidates);
+ const r=document.getElementById("results");r.hidden=false;
+ r.innerHTML="<h2>BEST MATCHES</h2>"+ranked.map(x=>`<div class="result">
+ <div><div class="score">${x.score}</div><small>${x.confidence}% conf.</small></div>
+ <div><b>${x.candidate.name}</b><div class="bar"><i style="width:${x.score}%"></i></div>
+ <div>${x.reasons.map(y=>`<span class="pill">${y}</span>`).join("")}</div></div></div>`).join("");
+};
+</script>
+</body>
+</html>
