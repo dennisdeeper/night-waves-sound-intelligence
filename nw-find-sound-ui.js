@@ -143,10 +143,17 @@ class FindSoundUI {
     const c=this.unwrapCandidate(item)||{};
     const score=ranked&&item?.score!=null?`<span class="score">${Math.round(item.score)}%</span>`:'';
     const reasons=ranked&&item?.reasons?.length?`<div class="reasons">${item.reasons.slice(0,3).join(' • ')}</div>`:'';
-    return `<div class="candidate"><div><strong>${ranked?'#'+rank+' ':''}${(c.startSeconds||0).toFixed(2)}s → ${(c.endSeconds||0).toFixed(2)}s</strong>${reasons}</div><div class="candidate-actions">${score}<button class="previewBtn">Preview</button></div></div>`;
+    return `<div class="candidate"><div><strong>${ranked?'#'+rank+' ':''}${(c.startSeconds||0).toFixed(2)}s → ${(c.endSeconds||0).toFixed(2)}s</strong>${reasons}</div><div class="candidate-actions">${score}<button class="previewBtn">Preview</button>${ranked?'<button class="useStudioBtn">Use in Studio</button>':''}</div></div>`;
   }
   wirePreviewButtons(container,list){
     container.querySelectorAll('.previewBtn').forEach((btn,i)=>btn.addEventListener('click',()=>this.preview(this.unwrapCandidate(list[i]))));
+    container.querySelectorAll('.useStudioBtn').forEach((btn,i)=>btn.addEventListener('click',()=>{
+      const item=list[i];
+      if(global.NightWavesStudioHandoff){
+        const manifest=global.NightWavesStudioHandoff.emit(item,this.recommendation);
+        this.setStatus(`Selected ${manifest.candidate.id} for Studio`);
+      }
+    }));
   }
   renderCandidates(list){
     const show=list.slice(0,12), el=$('nwCandidates');
