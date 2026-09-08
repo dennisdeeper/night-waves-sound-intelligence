@@ -36,6 +36,29 @@ class FindSoundUI {
     try{ t=localStorage.getItem('nwTheme')||'warm'; }catch{}
     this.setTheme(t);
   }
+
+  renderConfidence(value){
+    const el=$('nwConfidence');
+    if(!el) return;
+    const band=global.NightWavesTrackFindHook?.confidenceBand?.(value)||'low';
+    const pct=Math.round((Number(value)||0)*100);
+    el.textContent=`${pct}% • ${band}`;
+    el.dataset.band=band;
+  }
+  renderIntent(intent={}){
+    const el=$('nwIntent');
+    if(!el) return;
+    const labels=[];
+    const metrics=['energy','brightness','movement','transient','texture','warmth','darkness','density'];
+    for(const key of metrics){
+      if(Number.isFinite(+intent[key]) && +intent[key] > .05) labels.push(`${key} ${Math.round(+intent[key]*100)}%`);
+    }
+    if(intent.role) labels.push(`role ${intent.role}`);
+    if(intent.bpm) labels.push(`${intent.bpm} BPM`);
+    if(intent.root) labels.push(`root ${intent.root}`);
+    el.innerHTML=labels.length?labels.map(x=>`<span class="intent-chip">${x}</span>`).join(''):'<span class="empty">No intent descriptors yet.</span>';
+  }
+
   async ensureAudio(){
     if(!this.audioContext) this.audioContext=new (global.AudioContext||global.webkitAudioContext)();
     if(this.audioContext.state==='suspended') await this.audioContext.resume();
@@ -89,6 +112,8 @@ class FindSoundUI {
     this.results=out.results||[];
     this.renderResults(this.results);
     this.setProgress(100);
+    this.renderIntent(out.request?.intent || {});
+    this.renderConfidence(this.recommendation.confidence);
     this.setStatus(`Find Sound ranked ${this.results.length} slices`);
   }
   async preview(candidate){
@@ -113,13 +138,15 @@ class FindSoundUI {
       this.activeSource=null;
     }
   }
-  candidateRow(c,ranked=false,rank=0){
-    const score=ranked&&c.score!=null?`<span class="score">${Math.round(c.score)}%</span>`:'';
-    const reasons=ranked&&c.reasons?.length?`<div class="reasons">${c.reasons.slice(0,3).join(' • ')}</div>`:'';
+  unwrapCandidate(item){ return item?.candidate || item; }
+  candidateRow(item,ranked=false,rank=0){
+    const c=this.unwrapCandidate(item)||{};
+    const score=ranked&&item?.score!=null?`<span class="score">${Math.round(item.score)}%</span>`:'';
+    const reasons=ranked&&item?.reasons?.length?`<div class="reasons">${item.reasons.slice(0,3).join(' • ')}</div>`:'';
     return `<div class="candidate"><div><strong>${ranked?'#'+rank+' ':''}${(c.startSeconds||0).toFixed(2)}s → ${(c.endSeconds||0).toFixed(2)}s</strong>${reasons}</div><div class="candidate-actions">${score}<button class="previewBtn">Preview</button></div></div>`;
   }
   wirePreviewButtons(container,list){
-    container.querySelectorAll('.previewBtn').forEach((btn,i)=>btn.addEventListener('click',()=>this.preview(list[i])));
+    container.querySelectorAll('.previewBtn').forEach((btn,i)=>btn.addEventListener('click',()=>this.preview(this.unwrapCandidate(list[i]))));
   }
   renderCandidates(list){
     const show=list.slice(0,12), el=$('nwCandidates');
@@ -133,6 +160,7 @@ class FindSoundUI {
   }
   bind(){
     this.restoreTheme();
+    this.renderConfidence(this.recommendation.confidence);
     $('nwTheme')?.addEventListener('change',e=>this.setTheme(e.target.value));
     $('nwFile').addEventListener('change',e=>this.loadFile(e.target.files?.[0]).catch(err=>this.setStatus(err.message)));
     $('nwAnalyseBtn').addEventListener('click',()=>this.analyse().catch(()=>{}));

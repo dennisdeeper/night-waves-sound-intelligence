@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en" data-theme="warm">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Night Waves — Connected Intelligence R&D v0.6</title>
+<style>
+:root[data-theme="warm"]{
+  --bg:#130f0c;--panel:#211912;--panel2:#2b2118;--line:#513b2b;--text:#f3e8da;--muted:#aa9784;
+  --accent:#d8b37d;--accent2:#f2d3a3;--accentSoft:rgba(216,179,125,.13);--glow:rgba(242,211,163,.18);
+}
+:root[data-theme="pulse"]{
+  --bg:#071013;--panel:#0b171b;--panel2:#102027;--line:#193d46;--text:#e8f8f8;--muted:#7da0a7;
+  --accent:#28d7d7;--accent2:#ff4058;--accentSoft:rgba(40,215,215,.10);--glow:rgba(255,64,88,.16);
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 20% 0%,var(--panel2),var(--bg) 48%,#090909 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;transition:.25s}
+.shell{max-width:980px;margin:auto;padding:24px}.brand{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:18px}.brand-left{display:flex;align-items:center;gap:14px}
+.logo{font-size:28px;font-weight:800;letter-spacing:.18em;color:var(--accent);text-shadow:0 0 22px var(--glow)}.kicker{color:var(--muted);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+.card{background:linear-gradient(180deg,color-mix(in srgb,var(--panel2) 94%,transparent),color-mix(in srgb,var(--panel) 97%,transparent));border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 14px 40px rgba(0,0,0,.35);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}@media(max-width:760px){.grid{grid-template-columns:1fr}.shell{padding:14px}.brand{align-items:flex-start}.brand-left{align-items:flex-start}}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:16px;margin:0 0 12px}p{color:var(--muted);line-height:1.45}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}button,input,select{font:inherit}
+button{border:1px solid var(--line);background:var(--panel2);color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer}
+button.primary{background:linear-gradient(180deg,var(--accent),color-mix(in srgb,var(--accent) 65%,black));color:#0d0d0d;border-color:var(--accent2);font-weight:800}
+:root[data-theme="pulse"] button.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#061114}
+button:disabled{opacity:.45;cursor:not-allowed}input[type=file]{max-width:100%;color:var(--muted)}
+select{background:var(--panel);color:var(--text);border:1px solid var(--line);padding:8px;border-radius:9px}
+.progress{height:8px;background:#090909;border:1px solid var(--line);border-radius:20px;overflow:hidden;margin-top:14px}.progress>div{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .2s ease}
+.status{font-size:13px;color:var(--muted);margin-top:8px;display:flex;justify-content:space-between;gap:12px}
+.recommendation{padding:14px;border-left:3px solid var(--accent);background:var(--accentSoft);border-radius:10px;color:var(--text)}
+.candidate{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid var(--line)}.candidate:first-child{border-top:0}.candidate-actions{display:flex;gap:8px;align-items:center}
+.score{min-width:48px;text-align:center;color:var(--accent2);font-weight:800}.reasons{font-size:12px;color:var(--muted);margin-top:4px}.empty,.note{color:var(--muted);font-size:12px}
+.theme-box{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted)}
+
+.intent-wrap{display:flex;flex-wrap:wrap;gap:7px;margin-top:10px}.intent-chip{font-size:11px;padding:6px 8px;border:1px solid var(--line);border-radius:999px;background:var(--accentSoft);color:var(--text)}
+.confidence{font-size:12px;font-weight:800;padding:6px 9px;border-radius:999px;border:1px solid var(--line);display:inline-block;margin-top:8px}
+.confidence[data-band="high"]{box-shadow:0 0 18px var(--glow)}
+.confidence[data-band="medium"]{opacity:.9}.confidence[data-band="low"]{opacity:.7}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="brand">
+    <div class="brand-left"><div class="logo">NW</div><div><div class="kicker">Night Waves Sound Intelligence</div><div class="note">R&D v0.6 • Connected Intelligence</div></div></div>
+    <div class="theme-box"><span>Interface</span><select id="nwTheme"><option value="warm">Warm Studio</option><option value="pulse">Cyan / Red Pulse</option></select></div>
+  </div>
+  <div class="card"><h1>Find the sound your track needs next.</h1><p>Analyse local audio, turn slices into Sound DNA, rank them against the track's recommendation, then audition only when you choose.</p><div class="recommendation">Transition needs more energy, brighter movement and a transient lift.<div id="nwConfidence" class="confidence">78% • medium</div><div id="nwIntent" class="intent-wrap"><span class="empty">Run Find Sound to expose intent descriptors.</span></div></div></div>
+  <div class="card"><h2>1. Load & analyse</h2><div class="controls">
+    <input id="nwFile" type="file" accept="audio/*">
+    <label>Slice <select id="nwSliceSeconds"><option value="1">1 sec</option><option value="2" selected>2 sec</option><option value="4">4 sec</option></select></label>
+    <button id="nwAnalyseBtn" class="primary" disabled>Analyse</button><button id="nwCancelBtn" disabled>Cancel</button><button id="nwStopBtn">Stop Preview</button>
+  </div><div class="progress"><div id="nwProgressBar"></div></div><div class="status"><span id="nwStatus">Waiting for audio.</span><span id="nwProgressLabel">0%</span></div></div>
+  <div class="grid"><div class="card"><h2>2. Candidate slices</h2><div id="nwCandidates"><div class="empty">No slices yet.</div></div></div>
+  <div class="card"><h2>3. Best matches</h2><div class="controls"><button id="nwFindBtn" class="primary" disabled>Find Sound</button></div><div id="nwResults"><div class="empty">Run Find Sound after analysis.</div></div></div></div>
+  <div class="card note">Safety boundary: this development page does not use Live Input, recorder, Scenes or the Night Waves DSP graph. Preview playback is a separate user-triggered audition path only.</div>
+</div>
+<script src="./nw-intelligence-bridge.js"></script>
+<script src="./nw-audio-dna.js"></script>
+<script src="./nw-find-sound-adapter.js"></script>
+<script src="./nw-track-find-hook.js"></script>
+<script src="./nw-analysis-runner.js"></script>
+<script src="./nw-find-sound-ui.js"></script>
+<script>new NightWavesFindSoundUI().bind();</script>
+</body>
+</html>
