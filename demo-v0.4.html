@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Night Waves — Find Sound R&D v0.4</title>
+<style>
+:root{
+  --bg:#15120f;
+  --panel:#201a15;
+  --panel2:#2a211a;
+  --line:#4a3729;
+  --text:#f3e8da;
+  --muted:#ad9a87;
+  --gold:#d8b37d;
+  --gold2:#f2d3a3;
+  --shadow:rgba(0,0,0,.35);
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 20% 0%,#2b2119 0,#17130f 42%,#110e0b 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif}
+.shell{max-width:980px;margin:auto;padding:24px}
+.brand{display:flex;align-items:center;gap:14px;margin-bottom:18px}
+.logo{font-size:28px;font-weight:800;letter-spacing:.18em;color:var(--gold2);text-shadow:0 0 22px rgba(242,211,163,.18)}
+.kicker{color:var(--muted);font-size:12px;letter-spacing:.16em;text-transform:uppercase}
+.card{background:linear-gradient(180deg,rgba(42,33,26,.94),rgba(30,24,19,.96));border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 14px 40px var(--shadow);margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}.shell{padding:14px}}
+h1{font-size:26px;margin:0 0 4px}
+h2{font-size:16px;margin:0 0 12px}
+p{color:var(--muted);line-height:1.45}
+.controls{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+button,input,select{font:inherit}
+button{border:1px solid #6a4e37;background:#31251c;color:var(--text);padding:10px 14px;border-radius:10px;cursor:pointer}
+button.primary{background:linear-gradient(180deg,#c79b61,#9b6f3f);color:#17110d;border-color:#ddb77d;font-weight:700}
+button:disabled{opacity:.45;cursor:not-allowed}
+input[type=file]{max-width:100%;color:var(--muted)}
+select{background:#1b1612;color:var(--text);border:1px solid var(--line);padding:8px;border-radius:9px}
+.progress{height:8px;background:#110e0b;border:1px solid #3a2a20;border-radius:20px;overflow:hidden;margin-top:14px}
+.progress>div{height:100%;width:0;background:linear-gradient(90deg,#8d6035,#e5bd83);transition:width .2s ease}
+.status{font-size:13px;color:var(--muted);margin-top:8px;display:flex;justify-content:space-between;gap:12px}
+.recommendation{padding:14px;border-left:3px solid var(--gold);background:#19140f;border-radius:10px;color:#eadac6}
+.candidate{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 0;border-top:1px solid #3b2e24}
+.candidate:first-child{border-top:0}
+.candidate-actions{display:flex;gap:8px;align-items:center}
+.score{min-width:48px;text-align:center;color:var(--gold2);font-weight:800}
+.reasons{font-size:12px;color:var(--muted);margin-top:4px}
+.empty{color:var(--muted);font-size:13px;padding:8px 0}
+.note{font-size:12px;color:#8f7d6d}
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="brand">
+    <div class="logo">NW</div>
+    <div><div class="kicker">Night Waves Sound Intelligence</div><div class="note">R&D v0.4 • isolated Find Sound panel</div></div>
+  </div>
+
+  <div class="card">
+    <h1>Find the sound your track needs next.</h1>
+    <p>This prototype analyses loaded audio into candidate slices, applies Sound DNA, ranks matches against a Track Intelligence recommendation, and previews only when you ask.</p>
+    <div class="recommendation">Transition needs more energy, brighter movement and a transient lift.</div>
+  </div>
+
+  <div class="card">
+    <h2>1. Load & analyse</h2>
+    <div class="controls">
+      <input id="nwFile" type="file" accept="audio/*">
+      <label>Slice
+        <select id="nwSliceSeconds">
+          <option value="1">1 sec</option>
+          <option value="2" selected>2 sec</option>
+          <option value="4">4 sec</option>
+        </select>
+      </label>
+      <button id="nwAnalyseBtn" class="primary" disabled>Analyse</button>
+      <button id="nwCancelBtn" disabled>Cancel</button>
+      <button id="nwStopBtn">Stop Preview</button>
+    </div>
+    <div class="progress"><div id="nwProgressBar"></div></div>
+    <div class="status"><span id="nwStatus">Waiting for audio.</span><span id="nwProgressLabel">0%</span></div>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>2. Candidate slices</h2>
+      <div id="nwCandidates"><div class="empty">No slices yet.</div></div>
+    </div>
+    <div class="card">
+      <h2>3. Best matches</h2>
+      <div class="controls"><button id="nwFindBtn" class="primary" disabled>Find Sound</button></div>
+      <div id="nwResults"><div class="empty">Run Find Sound after analysis.</div></div>
+    </div>
+  </div>
+
+  <div class="card note">
+    Safety boundary: this page does not use Live Input, recorder, Scenes or the Night Waves DSP graph. Preview playback is a separate user-triggered audition path only.
+  </div>
+</div>
+
+<script src="./nw-intelligence-bridge.js"></script>
+<script src="./nw-audio-dna.js"></script>
+<script src="./nw-find-sound-adapter.js"></script>
+<script src="./nw-find-sound-ui.js"></script>
+<script>new NightWavesFindSoundUI().bind();</script>
+</body>
+</html>
