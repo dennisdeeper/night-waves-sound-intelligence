@@ -1,0 +1,11 @@
+<!doctype html><html lang="en" data-theme="warm"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Night Waves v0.7 Isolated Mount</title>
+<link rel="stylesheet" href="./nw-find-sound-mount.css"><style>
+body{margin:0;background:#100e0c;color:#eee;font-family:Inter,system-ui,sans-serif}.shell{max-width:900px;margin:auto;padding:24px}.host{border:1px dashed #66584d;border-radius:18px;padding:18px;margin-bottom:18px}.host h1{margin:0 0 8px}.host p{color:#a99}.row{display:flex;gap:10px;flex-wrap:wrap}.row button,.row select{padding:9px 12px}.mount-zone{max-width:500px}
+</style></head><body><div class="shell"><section class="host"><h1>Track Intelligence Host Simulator</h1><p>This page simulates the narrow handoff only. It contains no Live Input, recorder, Scenes or production DSP.</p><div class="row"><button id="sendRec">Send recommendation</button><select id="theme"><option value="warm">Warm Studio</option><option value="pulse">Cyan / Red Pulse</option></select></div></section><div id="findSoundMount" class="mount-zone"></div></div>
+<script src="./nw-intelligence-bridge.js"></script><script src="./nw-find-sound-adapter.js"></script><script src="./nw-track-find-hook.js"></script><script src="./nw-host-contract.js"></script><script src="./nw-find-sound-mount.js"></script>
+<script>
+NightWavesFindSoundMount.mount('#findSoundMount');
+document.getElementById('sendRec').onclick=()=>NightWavesHostContract.emitTrackRecommendation({message:'Transition needs more energy, brighter movement and a transient lift',confidence:.78,bpm:124,root:'F#',durationBars:2,role:'transition'});
+document.getElementById('theme').onchange=e=>document.documentElement.dataset.theme=e.target.value;
+window.addEventListener('nw:find-sound-requested',e=>{ const rec=e.detail.recommendation; const fake=[{candidate:{id:'slice-1'},score:88},{candidate:{id:'slice-2'},score:76}]; window.dispatchEvent(new CustomEvent('nw:find-sound-results',{detail:{results:fake,recommendation:rec}})); });
+</script></body></html>

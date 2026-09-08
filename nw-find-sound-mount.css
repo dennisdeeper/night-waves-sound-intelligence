@@ -1,0 +1,4 @@
+.nw-find-sound-mount{--nwm-bg:#211912;--nwm-line:#513b2b;--nwm-text:#f3e8da;--nwm-muted:#aa9784;--nwm-accent:#d8b37d}
+[data-theme="pulse"] .nw-find-sound-mount{--nwm-bg:#0b171b;--nwm-line:#193d46;--nwm-text:#e8f8f8;--nwm-muted:#7da0a7;--nwm-accent:#28d7d7}
+.nw-mount-card{background:var(--nwm-bg);border:1px solid var(--nwm-line);border-radius:16px;padding:16px;color:var(--nwm-text);font-family:Inter,system-ui,sans-serif}
+.nw-mount-kicker{font-size:10px;letter-spacing:.16em;color:var(--nwm-muted)}.nw-mount-title{font-size:20px;font-weight:800;margin:4px 0 8px}.nw-mount-copy{line-height:1.4}.nw-mount-meta,.nw-mount-results{font-size:12px;color:var(--nwm-muted);margin-top:8px}.nw-mount-card button{margin-top:12px;border:1px solid var(--nwm-line);border-radius:10px;padding:9px 12px;background:var(--nwm-accent);color:#101010;font-weight:800}
