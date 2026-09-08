@@ -1,0 +1,22 @@
+const assert=require('assert');
+global.NightWavesIntelligenceBridge=require('./nw-intelligence-bridge.js');
+global.NightWavesAudioDNA=require('./nw-audio-dna.js');
+const A=require('./nw-find-sound-adapter.js');
+const sr=8000,n=sr*4;
+const left=Float32Array.from({length:n},(_,i)=>Math.sin(2*Math.PI*220*i/sr)*0.3);
+const fake={sampleRate:sr,numberOfChannels:1,getChannelData:()=>left};
+(async()=>{
+ let progress=[];
+ const candidates=await A.analyseBuffer(fake,{sliceSeconds:1,onProgress:v=>progress.push(v),bpm:120,role:'melodic'});
+ assert(candidates.length===4);
+ assert(progress.at(-1)===100);
+ assert(candidates.every(c=>c.metadata.auditionOnly===true));
+ const m=A.findMatches({message:'needs a tonal melodic lift',bpm:120,root:'A',confidence:.8},candidates);
+ assert(m.results.length===4);
+ assert(m.request.safety.autoCommitsAudio===false);
+ const p=A.requestPreview(candidates[0]);
+ assert(p.auditionOnly && !p.autoCommit && !p.changesDSP);
+ const ac=new AbortController(); ac.abort();
+ await assert.rejects(()=>A.analyseBuffer(fake,{signal:ac.signal}),e=>e.name==='AbortError');
+ console.log('PASS: Find Sound Adapter v0.3 tests');
+})().catch(e=>{console.error(e);process.exit(1)});
