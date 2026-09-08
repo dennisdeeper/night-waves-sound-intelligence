@@ -1,0 +1,1 @@
+const fs=require('fs'),assert=require('assert');const h=fs.readFileSync('./unified-studio-v1.2.html','utf8');assert(h.includes('data-view="studio"'));assert(h.includes('data-panel="studio"'));assert(h.includes('src="./index.html"'));assert(!h.includes('getUserMedia'));console.log('PASS: v1.2 Studio integration shell');
