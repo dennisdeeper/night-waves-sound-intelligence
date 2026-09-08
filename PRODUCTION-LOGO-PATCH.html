@@ -1,0 +1,26 @@
+<!-- Night Waves production logo patch v1.5
+Apply ONLY these two edits to the existing production index.html.
+No audio/DSP/recorder/Scenes/Live Input JavaScript is changed.
+-->
+
+<!-- 1) Replace the existing .nw-monogram CSS rules with: -->
+<style>
+.nw-monogram{
+  width:64px;height:44px;display:grid;place-items:center;flex:0 0 auto;
+  overflow:visible;
+  filter:drop-shadow(0 0 10px rgba(230,173,114,.22));
+}
+.nw-monogram img{
+  width:100%;height:100%;display:block;object-fit:contain;
+  object-position:center;
+  mix-blend-mode:screen;
+}
+.nw-monogram:hover{
+  filter:drop-shadow(0 0 14px rgba(230,173,114,.34));
+}
+</style>
+
+<!-- 2) Replace ONLY the current <div class="nw-monogram">...</div> SVG block with: -->
+<div class="nw-monogram" aria-label="Night Waves logo" title="Night Waves">
+  <img src="./night-waves-corporate-logo-warm.png" alt="Night Waves">
+</div>
