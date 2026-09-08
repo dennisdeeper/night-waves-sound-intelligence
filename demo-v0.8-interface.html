@@ -1,0 +1,45 @@
+<!doctype html><html lang="en" data-theme="warm"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Night Waves — Connected Intelligence v0.8</title>
+<link rel="stylesheet" href="./nw-interface-v0.8.css"></head><body>
+<main class="nw-shell">
+<header class="nw-topbar"><div class="nw-brand"><div class="nw-mark">NW</div><div><div class="nw-eyebrow">Night Waves</div><div class="nw-product">Sound Intelligence</div></div></div>
+<select id="nwTheme" class="nw-theme" aria-label="Interface lighting"><option value="warm">Warm Studio</option><option value="pulse">Cyan / Red Pulse</option></select></header>
+
+<section class="nw-hero">
+<div class="nw-eyebrow">Connected Intelligence</div>
+<h1>Hear what the track needs next.</h1>
+<p>Track Intelligence identifies the musical gap. Find Sound turns that recommendation into a focused search through compatible sound DNA.</p>
+<div class="nw-intel"><div class="nw-intel-label">Current recommendation</div>
+<div class="nw-intel-copy">Transition needs more energy, brighter movement and a transient lift.</div>
+<div class="nw-signal"><span class="nw-chip active">78% confidence</span><span class="nw-chip">124 BPM</span><span class="nw-chip">F#</span><span class="nw-chip">Transition</span></div></div>
+</section>
+
+<section class="nw-flow">
+<article class="nw-panel"><div class="nw-panel-head"><div><div class="nw-step">01 · Listen</div><h2>Analyse track</h2></div></div>
+<p>Load a local track for isolated Sound DNA analysis. Nothing is committed to the production audio path.</p>
+<div class="nw-drop"><input id="nwFile" type="file" accept="audio/*"><div style="margin-top:8px">Drop or choose audio</div></div>
+<div class="nw-actions"><button id="nwAnalyseBtn" class="primary" disabled>Analyse</button><button id="nwCancelBtn" disabled>Cancel</button><button id="nwStopBtn">Stop preview</button></div>
+<div class="nw-progress"><div id="nwProgressBar"></div></div><div class="nw-statusbar"><span id="nwStatus">Waiting for audio.</span><span id="nwProgressLabel">0%</span></div>
+<select id="nwSliceSeconds" hidden><option value="2" selected>2</option></select>
+</article>
+
+<article class="nw-panel"><div class="nw-panel-head"><div><div class="nw-step">02 · Decide</div><h2>Find Sound</h2></div><button id="nwFindBtn" class="primary" disabled>Find Sound</button></div>
+<p>Rank candidate moments by musical intent, compatibility and confidence.</p>
+<div id="nwIntent" class="nw-signal"><span class="nw-chip">energy</span><span class="nw-chip">brightness</span><span class="nw-chip">movement</span><span class="nw-chip">transient</span></div>
+<div id="nwConfidence" class="nw-chip active" style="margin-top:10px;display:inline-block">78% confidence</div>
+<div id="nwResults" class="nw-results"><div class="nw-meta">Best matches will appear here.</div></div>
+</article>
+</section>
+
+<section class="nw-panel" style="margin-top:18px"><div class="nw-step">Candidate DNA</div><h2>Audition pool</h2>
+<div id="nwCandidates" class="nw-results"><div class="nw-meta">Analyse a track to create candidate slices.</div></div></section>
+</main>
+<script src="./nw-intelligence-bridge.js"></script><script src="./nw-audio-dna.js"></script><script src="./nw-find-sound-adapter.js"></script>
+<script src="./nw-track-find-hook.js"></script><script src="./nw-analysis-runner.js"></script><script src="./nw-find-sound-ui.js"></script>
+<script>
+const ui=new NightWavesFindSoundUI(); ui.bind();
+const theme=document.getElementById('nwTheme');
+try{theme.value=localStorage.getItem('nwTheme')||'warm'}catch{}
+theme.onchange=e=>ui.setTheme(e.target.value);
+</script></body></html>

@@ -1,0 +1,15 @@
+const assert=require('assert'),fs=require('fs');
+const html=fs.readFileSync('./demo-v0.8-interface.html','utf8');
+const css=fs.readFileSync('./nw-interface-v0.8.css','utf8');
+assert(html.includes('Hear what the track needs next.'));
+assert(html.includes('Warm Studio'));
+assert(html.includes('Cyan / Red Pulse'));
+for(const id of ['nwFile','nwAnalyseBtn','nwCancelBtn','nwStopBtn','nwFindBtn','nwProgressBar','nwProgressLabel','nwStatus','nwSliceSeconds','nwIntent','nwConfidence','nwResults','nwCandidates']) assert(html.includes(`id="${id}"`));
+assert(css.includes(':root[data-theme="pulse"]'));
+assert(!html.includes('getUserMedia'));
+assert(!html.includes('MediaRecorder'));
+assert(!html.includes('connectInput('));
+assert(!html.includes('applyDSP('));
+const ids=[...html.matchAll(/\bid="([^"]+)"/g)].map(m=>m[1]);
+assert.deepStrictEqual(ids.filter((x,i)=>ids.indexOf(x)!==i),[]);
+console.log('PASS: v0.8 interface refresh regression tests');
