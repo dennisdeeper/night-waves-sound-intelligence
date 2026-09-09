@@ -1599,7 +1599,7 @@ button{cursor:pointer}
     if(!buffer)$("waveEmpty").style.display="flex";
     drawWaveform();setStatus("LIVE INPUT STOPPED","ok");
   }
-  // v3.23.2 CLEAN LIVE INPUT: use the single proven startLive()/stopLive() path.
+  // v3.23.3 CLEAN LIVE INPUT: single proven startLive()/stopLive() path; global unrelated promise rejections no longer masquerade as audio failures.
   $("liveBtn").onclick=async()=>{if(liveMode)stopLive();else await startLive()};
   $("liveMonitorBtn").onclick=()=>{
     if(!liveMode){toast("Start Live Input first");return}
@@ -1825,7 +1825,7 @@ button{cursor:pointer}
   });
 
   window.addEventListener("error",e=>{console.error("Night Waves runtime error",e.error||e.message);setStatus("TECHNICAL ERROR • CHECK CONSOLE","error")});
-  window.addEventListener("unhandledrejection",e=>{console.error("Night Waves async error",e.reason);setStatus("AUDIO/ASYNC ERROR • CHECK CONSOLE","error")});
+  window.addEventListener("unhandledrejection",e=>{console.error("Night Waves async error",e.reason);/* Do not overwrite Live/Input status: startLive and recorder handle their own errors. */});
 
 
   // v2.8 LIVE INPUT RECOVERY + TRACK INTELLIGENCE — intentionally separate from live Sound Engine
