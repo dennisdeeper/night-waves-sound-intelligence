@@ -2765,5 +2765,150 @@ async function startLiveHardened() {
 })();
 </script>
 
-</body>
+<!-- NIGHT WAVES LIVE INPUT HOTFIX v3.23.1 -->
+<script>
+(()=>{
+  let nwLiveStarting = false;
+  let nwLiveRequest = 0;
+
+  async function nwMicPermission(){
+    try{
+      if(!navigator.permissions?.query) return "unknown";
+      return (await navigator.permissions.query({name:"microphone"})).state || "unknown";
+    }catch(_){ return "unknown"; }
+  }
+
+  function nwReleaseLive(){
+    try{ liveSource?.disconnect(); }catch(_){}
+    try{ liveStream?.getTracks()?.forEach(t=>t.stop()); }catch(_){}
+    liveSource=null;
+    liveStream=null;
+  }
+
+  function nwMuteMonitor(){
+    liveMonitorEnabled=false;
+    const b=document.getElementById("liveMonitorBtn");
+    if(b){ b.classList.remove("active"); b.textContent="Monitor Off"; }
+    try{ applyDSP(); }catch(_){}
+  }
+
+  function nwLiveMessage(err, permission){
+    const n=err?.name||"";
+    if(!window.isSecureContext) return "Live Input requires the secure HTTPS Night Waves site.";
+    if(permission==="denied" || n==="NotAllowedError" || n==="SecurityError")
+      return "Microphone permission is blocked. Allow Microphone for this site, reload once, then press Live.";
+    if(n==="NotFoundError" || n==="DevicesNotFoundError")
+      return "No audio input is currently available.";
+    if(n==="NotReadableError" || n==="TrackStartError" || n==="AbortError")
+      return "The audio input is unavailable or is being used by another application.";
+    return err?.message || "Live Input could not start.";
+  }
+
+  async function nwStartLive(){
+    if(nwLiveStarting || liveMode) return;
+    nwLiveStarting=true;
+    const request=++nwLiveRequest;
+    let stream=null;
+    const btn=document.getElementById("liveBtn");
+
+    if(btn) btn.textContent="Starting…";
+    setStatus("STARTING LIVE INPUT…","warn");
+
+    try{
+      if(!window.isSecureContext){
+        const e=new Error("Secure context required"); e.name="SecurityError"; throw e;
+      }
+      if(!navigator.mediaDevices?.getUserMedia)
+        throw new Error("This browser does not expose microphone input here.");
+
+      if(playing) pausePlayback();
+      nwReleaseLive();
+
+      const ac=ensureAudio();
+      if(!ac || ac.state==="closed") throw new Error("Audio engine is closed. Reload the page and try again.");
+      if(ac.state!=="running") await ac.resume();
+
+      nwMuteMonitor();
+
+      const permission=await nwMicPermission();
+      if(permission==="denied"){
+        const e=new Error("Microphone permission denied"); e.name="NotAllowedError"; throw e;
+      }
+
+      const preferred={audio:{
+        echoCancellation:false,
+        noiseSuppression:false,
+        autoGainControl:false,
+        channelCount:{ideal:2},
+        sampleRate:{ideal:48000}
+      }};
+
+      try{
+        stream=await navigator.mediaDevices.getUserMedia(preferred);
+      }catch(first){
+        const retryable=["OverconstrainedError","ConstraintNotSatisfiedError","TypeError",
+                         "AbortError","NotReadableError","TrackStartError"].includes(first?.name);
+        if(!retryable) throw first;
+        await new Promise(r=>setTimeout(r,120));
+        stream=await navigator.mediaDevices.getUserMedia({audio:true});
+      }
+
+      if(request!==nwLiveRequest){
+        stream?.getTracks()?.forEach(t=>t.stop());
+        return;
+      }
+
+      const track=stream.getAudioTracks()[0];
+      if(!track) throw new Error("The selected input did not provide an audio track.");
+
+      liveStream=stream;
+      liveSource=ac.createMediaStreamSource(stream);
+      connectInput(liveSource);
+      liveMode=true;
+      nwLiveStarting=false;
+      nwMuteMonitor();
+      syncWorldPulse();
+
+      track.addEventListener("ended",()=>{
+        if(liveStream===stream) stopLive();
+      },{once:true});
+
+      if(btn){ btn.classList.add("active"); btn.textContent="● Stop Live"; }
+      document.getElementById("fileName").textContent=track.label?`Live • ${track.label}`:"Live input";
+      document.getElementById("waveEmpty").style.display="none";
+      setStatus("LIVE INPUT • FX READY • MONITOR OFF","ok");
+      drawLiveWave();
+      toast("Live input connected — monitor remains off for safety.");
+    }catch(err){
+      try{ stream?.getTracks()?.forEach(t=>t.stop()); }catch(_){}
+      nwReleaseLive();
+      liveMode=false;
+      nwLiveStarting=false;
+      nwMuteMonitor();
+      syncWorldPulse();
+      if(btn){ btn.classList.remove("active"); btn.textContent="⌁ Live"; }
+
+      const permission=await nwMicPermission();
+      setStatus(permission==="denied"?"MICROPHONE PERMISSION BLOCKED":"LIVE INPUT UNAVAILABLE","error");
+      showModal("Live Input",`<p>${escapeHtml(nwLiveMessage(err,permission))}</p>`);
+    }finally{
+      if(request===nwLiveRequest) nwLiveStarting=false;
+    }
+  }
+
+  const liveBtn=document.getElementById("liveBtn");
+  if(liveBtn){
+    liveBtn.onclick=async()=>{
+      if(liveMode || nwLiveStarting){
+        ++nwLiveRequest;
+        nwLiveStarting=false;
+        stopLive();
+      }else{
+        await nwStartLive();
+      }
+    };
+  }
+})();
+</script>
+<!-- /NIGHT WAVES LIVE INPUT HOTFIX v3.23.1 --></body>
 </html>
